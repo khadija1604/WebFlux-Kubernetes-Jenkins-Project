@@ -1,0 +1,16 @@
+pipeline {
+    stages {
+         stage('checkout from scm') { 
+        // Get some code from a GitHub repository
+          git credentialsId: 'ada4e1a1-7088-4bcc-8545-aacaa9f9c2dc', url: 'https://github.com/khadija1604/WebFlux-Kubernetes-Jenkins-Project'   
+    }
+        stage('Mvn package'){
+      // Define maven home and build project
+      def mvnHome = tool name: 'Maven', type: 'maven'
+           withEnv(["MVN_HOME=$mvnHome"]) {
+                sh '"$MVN_HOME/bin/mvn" clean package'
+        }
+
+    }
+    }
+}
