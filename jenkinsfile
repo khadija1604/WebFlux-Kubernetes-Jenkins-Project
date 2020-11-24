@@ -1,16 +1,46 @@
 pipeline {
     stages {
-         stage('checkout from scm') { 
-        // Get some code from a GitHub repository
-          git credentialsId: 'ada4e1a1-7088-4bcc-8545-aacaa9f9c2dc', url: 'https://github.com/khadija1604/WebFlux-Kubernetes-Jenkins-Project'   
-    }
         stage('Mvn package'){
       // Define maven home and build project
-      def mvnHome = tool name: 'Maven', type: 'maven'
+        steps{
+               def mvnHome = tool name: 'Maven', type: 'maven'
            withEnv(["MVN_HOME=$mvnHome"]) {
-                sh '"$MVN_HOME/bin/mvn" clean package'
+                sh '"$MVN_HOME/bin/mvn" clean package' 
+           }
+
+        }
+        }
+        stage('Create docker image'){
+          steps{
+          sh 'docker build -t khadijadev/flowers-app:v1.0.0 .'
+           }
+            
+        }
+        
+        stage('Push docker image'){
+          steps{
+             withCredentials([string(credentialsId: 'docker-p', variable: 'dockerpwd')]) {
+              sh "docker login -u khadijadev -p ${dockerpwd}"
+              sh 'docker push khadijadev/flowers-app:v1.0.0'
+              }
+            }
+           
+        }
+        
+        stage('Deploy on kubernetes'){
+        steps{
+           script{
+              try{
+                 sh 'kubectl create -f *.yml' 
+              }catch(error){
+                  sh 'kubectl apply -f *.yml' 
+              }
+
+           }
+ 
+        }
+
         }
 
     }
     }
-}
