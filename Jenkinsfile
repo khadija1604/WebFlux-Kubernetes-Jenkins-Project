@@ -9,7 +9,7 @@ pipeline {
                  def mvnHome = tool name: 'Maven',
         type: 'maven'
         withEnv(["MVN_HOME=$mvnHome"]) {
-          sh '"$MVN_HOME/bin/mvn" clean package'
+          sh '"$MVN_HOME/bin/mvn" clean package -DskipTests'
         } 
       }
       }
