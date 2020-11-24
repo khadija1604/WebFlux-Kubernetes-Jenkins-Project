@@ -1,5 +1,6 @@
 pipeline {
     stages {
+    
         stage('Mvn package'){
       // Define maven home and build project
         steps{
@@ -10,6 +11,7 @@ pipeline {
 
         }
         }
+        
         stage('Create docker image'){
           steps{
           sh 'docker build -t khadijadev/flowers-app:v1.0.0 .'
