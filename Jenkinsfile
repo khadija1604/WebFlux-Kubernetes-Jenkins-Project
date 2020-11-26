@@ -35,11 +35,14 @@ pipeline {
     stage('Deploy on kubernetes') {
       steps {
         script {
-          try {
-            sh 'kubectl create -f *.yml'
-          } catch(error) {
-            sh 'kubectl apply -f *.yml'
-          }
+              withCredentials([string(credentialsId: 'token', variable: 'k8s_jenkins-token')]) {
+                           try {
+                                  sh "kubectl create -f *.yml --token $k8s_jenkins-token"
+                           } catch(error) {
+                                  sh "kubectl apply -f *.yml --token $k8s_jenkins-token"
+                           }
+               }
+
 
         }
 
